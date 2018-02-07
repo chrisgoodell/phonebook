@@ -32,7 +32,6 @@ def sortByNumber(contact):
     return contact.fetchNumber()
 
 
-
 # look up contact
 def findContact():
     # global contactList
