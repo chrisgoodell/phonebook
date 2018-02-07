@@ -2,13 +2,6 @@ import os, pickle
 from time import sleep
 
 contactList = []
-# try:
-#     open('phonebook.pickle')
-# except IOError:
-#     print "No saved contact list found."
-# else:
-#     with open('phonebook.pickle','r') as myfile:
-#         contactList = pickle.load(myfile)
 
 class Contact(object):
     def __init__(self, first, last, number):
@@ -28,14 +21,9 @@ class Contact(object):
     def fetchNumber(self):
         return self.number
 
-def getLast(contact):
-    return contact.fetchLast()
-
-def getFirst(contact):
-    return contact.fetchFirst()
-
-def getNumber(contact):
-    return contact.fetchNumber()
+# sort list of contacts by last name
+def sortByLast(contact):
+    return contact.last
 
 
 # look up contact
@@ -50,9 +38,9 @@ def findContact():
         print "No contacts stored."
     else:
         for contact in contactList:
-            first = contact.fetchFirst() #contact.fetchFirst(firstNameLookup)
-            last = contact.fetchLast() #contact.fetchLast(lastNameLookup)
-            number = contact.fetchNumber()  # contact.fetchLast(lastNameLookup)
+            first = contact.fetchFirst() 
+            last = contact.fetchLast()
+            number = contact.fetchNumber()
             if lastNameLookup == last:
                 sleep(1)
                 print "\nRecord found! \n", \
@@ -118,21 +106,36 @@ def listContacts():
     os.system('clear')
     print "-- List contacts --"
     print " "
+    sortedList = []
+    sortedList = sorted(contactList, key = sortByLast)
     # choice = ""
-    # sortedList = []
     if len(contactList) == 0:
         print "No contacts found."
     else:
-        for contact in contactList:
+        for contact in sortedList:
             print "First Name:   ", contact.first, "\nLast Name:    ", contact.last, "\nPhone Number: ", contact.number, " \n"
     raw_input("\nPress any key to continue...")
 
+# save entries to file
+def saveEntries():
+    myfile = open('phonebook.pickle', 'w')
+    pickle.dump(contactList, myfile)
+    myfile.close()
+
+# load previous entries from file
+def restoreEntries():
+    global contactList
+    try:
+        myfile = open('phonebook.pickle', 'r')
+        contactList = pickle.load(myfile)
+        return contactList
+    except:
+        pass
+    menu()
 
 # exit
 def quit_program():
-    # with open('phonebook_dict.pickle', 'w') as myfile:
-    #     pickle.dump(phonebook_dict, myfile)
-    # myfile.close()
+    saveEntries()    
     exit()
 
 
@@ -143,9 +146,12 @@ def menu():
 2. Add an entry
 3. Delete an entry
 4. List all entries
-5. Quit
+5. Load stored entries
+6. Quit
  """)
-    choice = int(raw_input("What do you want to do (1-5)? "))
+
+    choice = int(raw_input("What do you want to do (1-6)? "))
+
     if choice == 1:
         findContact()
         menu()
@@ -159,6 +165,8 @@ def menu():
         listContacts()
         menu()
     elif choice == 5:
+        restoreEntries()
+    elif choice == 6:
         quit_program()
     else:
         print "\nThat is not a valid option. Please try again.\n"
