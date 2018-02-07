@@ -1,8 +1,14 @@
-import os
+import os, pickle
 from time import sleep
-import pickle
 
 contactList = []
+# try:
+#     open('phonebook.pickle')
+# except IOError:
+#     print "No saved contact list found."
+# else:
+#     with open('phonebook.pickle','r') as myfile:
+#         contactList = pickle.load(myfile)
 
 class Contact(object):
     def __init__(self, first, last, number):
@@ -13,51 +19,53 @@ class Contact(object):
     def __repr__(self):
         return "%s %s -- %s" % (self.first, self.last, self.number)
 
-    def fetchFirst(self, first):
+    def fetchFirst(self):
         return self.first
     
-    def fetchLast(self, last):
+    def fetchLast(self):
         return self.last
 
-    def fetchNumber(self, number):
+    def fetchNumber(self):
         return self.number
 
-def sortByLast(contact):
+def getLast(contact):
     return contact.fetchLast()
 
-def sortByFirst(contact):
+def getFirst(contact):
     return contact.fetchFirst()
 
-def sortByNumber(contact):
+def getNumber(contact):
     return contact.fetchNumber()
 
 
 # look up contact
 def findContact():
-    # global contactList
+    results = 0    
+    os.system('clear')
     print "-- Find a contact --"
     print " "
+    firstNameLookup = raw_input("Enter first name: ")
+    lastNameLookup = raw_input("Enter last name:  ")
     if len(contactList) == 0:
         print "No contacts stored."
     else:
-        firstNameLookup = raw_input("Enter first name: ")
-        lastNameLookup = raw_input("Enter last name:  ")
         for contact in contactList:
-            first = contact.first() #contact.fetchFirst(firstNameLookup)
-            last = contact.last() #contact.fetchLast(lastNameLookup)
+            first = contact.fetchFirst() #contact.fetchFirst(firstNameLookup)
+            last = contact.fetchLast() #contact.fetchLast(lastNameLookup)
+            number = contact.fetchNumber()  # contact.fetchLast(lastNameLookup)
             if lastNameLookup == last:
                 sleep(1)
                 print "\nRecord found! \n", \
-                "First Name:   ", contact.first, \
-                "\nLast Name:    ", contact.last, \
-                "\nPhone Number: ", contact.number, " \n"
-                raw_input("Press any key to continue...\n")
-                menu()
-            else:
-                print "Contact not found.\n"
-                raw_input("Press any key to continue...\n")
-                sleep(1)
-                menu()
+                "First Name:   ", first, \
+                "\nLast Name:    ", last, \
+                "\nPhone Number: ", number, " \n"
+                results += 1
+        if results == 0:
+            sleep(1)
+            print "\nContact not found.\n"
+        sleep(1)
+        raw_input("Press any key to continue...\n")
+        menu()
 
 
 # add contact
@@ -110,8 +118,8 @@ def listContacts():
     os.system('clear')
     print "-- List contacts --"
     print " "
-    choice = ""
-    sortedList = []
+    # choice = ""
+    # sortedList = []
     if len(contactList) == 0:
         print "No contacts found."
     else:
@@ -122,6 +130,9 @@ def listContacts():
 
 # exit
 def quit_program():
+    # with open('phonebook_dict.pickle', 'w') as myfile:
+    #     pickle.dump(phonebook_dict, myfile)
+    # myfile.close()
     exit()
 
 
